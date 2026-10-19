@@ -7,7 +7,7 @@ class TaskCreate(BaseModel):
     title : str
     description : str | None = None
     status : Literal["todo","in_progress","completed"]
-    priority : str
+    priority : Literal["low","medium","high"]
     deadline : datetime | None = None
 class TaskResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -22,5 +22,5 @@ class TaskUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
     status: Literal["todo","in_progress","completed"] | None = None
-    priority: str | None = None
+    priority: Literal["low","medium","high"]
     deadline: datetime | None = None

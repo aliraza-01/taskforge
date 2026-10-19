@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserUpdate
 from app.security.password import hash_password,verify_password
+from fastapi import HTTPException
 def create_user(db:Session,username,email,password):
     user = User(
         username=username,
@@ -42,7 +43,8 @@ def verify_user(user_verify_data,db:Session):
     )
     user = result.scalar_one_or_none()
     if user is None:
-            return None
+        raise HTTPException(status_code=404,detail="User not found")
+
     password = verify_password(user_verify_data.password,user.password)
     if password:
         return user

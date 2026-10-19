@@ -16,6 +16,7 @@ def test_db(db:Session=Depends(get_db)):
     return {"database" : result.scalar()==1}
 @app.post("/tasks",response_model=TaskResponse,status_code=201)
 def create_task_endpoint(task_data:TaskCreate, current_user=Depends(get_current_user),db:Session=Depends(get_db)):
+
     task = create_task(
         db,
         project_id=task_data.project_id,
@@ -59,6 +60,7 @@ def delete_task_endpoint(task_id:int,current_user=Depends(get_current_user),db:S
 def create_project_endpoint(project_data:ProjectCreate,db:Session=Depends(get_db),current_user=Depends(get_current_user)):
     project = create_project(
         db,
+
         user_id=current_user.id,
         title=project_data.title,
         description=project_data.description,
@@ -72,7 +74,7 @@ def get_project_endpoint(project_id:int,current_user=Depends(get_current_user),d
     if project is None:
         raise HTTPException(status_code=404,detail="Project not Found")
     return project
-@app.get("/projects")
+@app.get("/projects",response_model=list[ProjectResponse])
 def get_all_project_endpoint(current_user=Depends(get_current_user),db:Session=Depends(get_db)):
     projects = get_projects(db,current_user)
     if projects is None:
@@ -91,7 +93,7 @@ def delete_project_endpoint(project_id:int,current_user=Depends(get_current_user
         raise HTTPException(status_code=404,detail="Project not Found")
     return project
 
-@app.post("/users",response_model=UserResponse)
+@app.post("/users",response_model=UserResponse,status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user_data:UserCreate,db:Session=Depends(get_db)):
     user = create_user(
         db,

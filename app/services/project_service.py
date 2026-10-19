@@ -29,8 +29,6 @@ def get_projects(db:Session,curren_user):
         Select(Project).where(curren_user.id==Project.user_id)
     )
     projects = result.scalars().all()
-    # if projects is not None:
-    #     return None
     return projects
 def update_project(project_id,current_user, project_update_data:ProjectUpdate,db:Session):
     result = db.execute(

@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     jwt_secret_key : str
 
     model_config = SettingsConfigDict(
-        env_file=".env"
+        env_file=".env",
+        extra="ignore"
     )
 
 
