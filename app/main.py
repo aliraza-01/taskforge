@@ -8,12 +8,16 @@ from app.schemas.user import UserCreate,UserResponse,UserUpdate,UserLogin,UserLo
 from app.services.task_service import create_task,get_tasK,get_tasks,update_task,delete_task
 from app.services.project_service import create_project,get_project,update_project,delete_project,get_projects
 from app.services.user_service import create_user,get_user,update_user,delete_user,verify_user
+from fastapi.responses import RedirectResponse
 from app.security.token import create_token
 app = FastAPI()
 @app.get("/test-db")
 def test_db(db:Session=Depends(get_db)):
     result = db.execute(text("SELECT 1"))
     return {"database" : result.scalar()==1}
+@app.get("/",include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 @app.post("/tasks",response_model=TaskResponse,status_code=201)
 def create_task_endpoint(task_data:TaskCreate, current_user=Depends(get_current_user),db:Session=Depends(get_db)):
 
