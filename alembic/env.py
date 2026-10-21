@@ -13,7 +13,7 @@ from app.core.config import settings
 config = context.config
 config.set_main_option(
     "sqlalchemy.url",
-    settings.database_url.replace("%", "%%")
+    (settings.neon_database_url or settings.database_url).replace("%", "%%")
 )
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -82,3 +82,4 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+ 

@@ -2,18 +2,28 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserUpdate
+from sqlalchemy.exc import IntegrityError
 from app.security.password import hash_password,verify_password
 from fastapi import HTTPException
 def create_user(db:Session,username,email,password):
+    existing_user = db.scalar(
+        select(User).where(User.email==email)
+    )
+    if existing_user:
+        raise HTTPException(status_code=409,detail="Email is already registered")
     user = User(
         username=username,
         email=email,
         password=hash_password(password)
     )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
+    try:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except IntegrityError:
+        db.rollback()
+        raise
 def get_user(user_id,db:Session):
     result = db.execute(select(User).where(User.id==user_id))
     user = result.scalar_one_or_none()
